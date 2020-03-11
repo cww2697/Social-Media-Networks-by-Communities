@@ -58,10 +58,30 @@ sm_new_mem <- membership(sm_new_community)
 sm_new_centrality <- centr_degree(sm_graph, mode = "all")
 
 # plot graph
-plot(sm_community, social_media_graph, vertex.label=NA,vertex.size=0.5,delete.vertices(simplify(sm_graph), degree(sm_graph)==0))
+plot(sm_community, social_media_graph, vertex.label=NA,vertex.size=0.5)
 plot(sm_new_community, sm_graph, vertex.label=NA,vertex.size=0.5)
 
 # Find followers of randomly selected users of data set Sample size of 5
+#create function
+follower_communities <- function(user, friends, i) {
+  user_followers <- get_followers(user)
+  ids <- sample.int(user_followers$user_id, 200, useHash = FALSE)
+  user_friends <- list()
+  Sys.sleep(15*60)
+  for (a in 1:length(ids)){
+    user_friends[[a]] <- get_friends(ids[a])
+    
+    # pause if divisible by 15
+    if (a %% 15 == 0){
+      Sys.sleep(15*60) # must enter time in seconds
+    }
+  }
+  # Combine data tables in list
+  friends[i] <- bind_rows(user_friends) %>% 
+    rename(friend = user_id)
+  rm(user,user_followers,user_friends)
+}
+
 usernames = stream_tbl$user.name
 users_sample = sample(usernames, 40, replace = FALSE, prob = NULL)
 user1 = users_sample[1]
