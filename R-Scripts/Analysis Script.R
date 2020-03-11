@@ -13,56 +13,7 @@ library(dplyr)
 library("tm")
 library("RColorBrewer")
 
-# authenticate via access token - Twitter API
-token <- create_token(
-  app = "-----",
-  consumer_key = "-----",
-  consumer_secret = "-----",
-  access_token = "-----",
-  access_secret = "-----")
-
-jsonfile <- readline(prompt="Enter file name: ")
-
-# Read in JSON Files
-Stream <- stream_in(file(jsonfile))
-Stream_flat <- jsonlite::flatten(Stream) #Flatten the JSON Filw into a table
-stream_tbl <- as_tibble(Stream_flat) #create a dataframe from the flattened JSON Table
-stream_tbl = stream_tbl[!grepl("RT", stream_tbl$text),]  #Removes all retweets from the dataframe
-stream_tbl = stream_tbl[!(!stream_tbl$lang=="en"),]  #remove all tweets that are not in english
-
-# Remove unused tables
-rm(Stream)
-rm(Stream_flat)
-rm(jsonfile)
-
-within(stream_tbl, rm(x, y))
-
-#Build Network Graph
-edges <-stream_tbl$in_reply_to_status_id # Create edge list from Reply to id string
-edges <-replace_na(edges, "NA") # Replace NA items with "NA" string
-social_media_graph <- graph(edges, n=max(edges)+1, directed=FALSE) # Create the graph
-
-# Calculate communities from the data
-sm_community <- cluster_walktrap(social_media_graph)
-SM_Mod <- modularity(sm_community)
-SM_Mem <- membership(sm_community)
-sm_centrality <- centr_degree(social_media_graph, mode = "all")
-
-# Delete single node communities, NA Node, and recompute communities
-sm_graph <- delete.vertices(social_media_graph, "NA")
-sm_graph <- delete.vertices(simplify(sm_graph), degree(sm_graph)==1)
-sm_graph <- delete.vertices(sm_graph, "NA")
-sm_new_community <- cluster_walktrap(sm_graph)
-sm_new_mod <- modularity(sm_new_community)
-sm_new_mem <- membership(sm_new_community)
-sm_new_centrality <- centr_degree(sm_graph, mode = "all")
-
-# plot graph
-plot(sm_community, social_media_graph, vertex.label=NA,vertex.size=0.5)
-plot(sm_new_community, sm_graph, vertex.label=NA,vertex.size=0.5)
-
-# Find followers of randomly selected users of data set Sample size of 5
-#create function
+#Define Functions
 follower_communities <- function(user, friends, i) {
   user_followers <- get_followers(user)
   ids <- sample.int(user_followers$user_id, 200, useHash = FALSE)
@@ -82,48 +33,62 @@ follower_communities <- function(user, friends, i) {
   rm(user,user_followers,user_friends)
 }
 
+# authenticate via access token - Twitter API
+token <- create_token(
+  app = "----",
+  consumer_key = "-----",
+  consumer_secret = "-----",
+  access_token = "-----",
+  access_secret = "-----")
+
+jsonfile <- readline(prompt="Enter file name: ")
+
+# Read in JSON Files
+Stream <- stream_in(file(jsonfile))
+Stream_flat <- jsonlite::flatten(Stream) #Flatten the JSON Filw into a table
+stream_tbl <- as_tibble(Stream_flat) #create a dataframe from the flattened JSON Table
+stream_tbl = stream_tbl[!grepl("RT", stream_tbl$text),]  #Removes all retweets from the dataframe
+#stream_tbl = stream_tbl[!(!stream_tbl$lang=="en"),]  #remove all tweets that are not in english
+
+# Remove unused tables
+rm(Stream)
+rm(Stream_flat)
+rm(jsonfile)
+
+#Build Network Graph
+edges <-stream_tbl$in_reply_to_status_id # Create edge list from Reply to id string
+edges <-replace_na(edges, "NA") # Replace NA items with "NA" string
+social_media_graph <- graph(edges, n=max(edges)+1, directed=FALSE) # Create the graph
+
+# Calculate communities from the data
+sm_community <- cluster_walktrap(social_media_graph)
+SM_Mod <- modularity(sm_community)
+SM_Mem <- membership(sm_community)
+sm_centrality <- centr_degree(social_media_graph, mode = "all")
+
+# Delete single node communities, NA Node, and recompute communities
+sm_graph <- delete.vertices(social_media_graph, "NA")
+sm_graph <- delete.vertices(simplify(sm_graph), degree(sm_graph)==1)
+sm_new_community <- cluster_walktrap(sm_graph)
+sm_new_mod <- modularity(sm_new_community)
+sm_new_mem <- membership(sm_new_community)
+sm_new_centrality <- centr_degree(sm_graph, mode = "all")
+
+#Comparison statistics
+noEdges_original <- gsize(social_media_graph)
+degree_original <- mean(degree(social_media_graph))
+noEdges_simplified <- gsize(sm_graph)
+degree_simplified <- mean(degree(sm_graph))
+
+# plot graph
+plot(social_media_graph, vertex.label=NA,vertex.size=0.5)
+plot(sm_new_community, sm_graph, vertex.label=NA,vertex.size=0.5)
+
+
+
+# Find followers of randomly selected users of data set Sample size of 5
 usernames = stream_tbl$user.name
 users_sample = sample(usernames, 40, replace = FALSE, prob = NULL)
-user1 = users_sample[1]
-user2 = users_sample[2]
-user3 = users_sample[3]
-user4 = users_sample[4]
-user5 = users_sample[5]
-user6 = users_sample[6]
-user7 = users_sample[7]
-user8 = users_sample[8]
-user9 = users_sample[9]
-user10 = users_sample[10]
-user11 = users_sample[11]
-user12 = users_sample[12]
-user13 = users_sample[13]
-user14 = users_sample[14]
-user15 = users_sample[15]
-user16 = users_sample[16]
-user17 = users_sample[17]
-user18 = users_sample[18]
-user19 = users_sample[19]
-user20 = users_sample[20]
-user21 = users_sample[21]
-user22 = users_sample[22]
-user23 = users_sample[23]
-user24 = users_sample[24]
-user25 = users_sample[25]
-user26 = users_sample[26]
-user27 = users_sample[27]
-user28 = users_sample[28]
-user29 = users_sample[29]
-user30 = users_sample[30]
-user31 = users_sample[31]
-user32 = users_sample[32]
-user33 = users_sample[33]
-user34 = users_sample[34]
-user35 = users_sample[35]
-user36 = users_sample[36]
-user37 = users_sample[37]
-user38 = users_sample[38]
-user39 = users_sample[39]
-user40 = users_sample[40]
 
 # get followers from users above
 user1_followers <- get_followers(user1)
