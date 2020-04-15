@@ -18,11 +18,11 @@ setwd("~/Social Media Network Growth/Politics")
 
 # authenticate via access token - Twitter API
 token <- create_token(
-  app = "Cody West",
-  consumer_key = "uAMKZaMyqwAan03Cd5ZJpL56A",
-  consumer_secret = "o9Q5OuYx6imBUcYvEIi8MVQ9WdSuCkCGIT9ieA0YNTJJZMBleL",
-  access_token = "846302774-pPB0TfVkUWOO4aEr8hKNlKupkog1g1VFPnho1Td3",
-  access_secret = "IUafuVm1YOk3S3hIflkUPxbI3Zb6pQubm2vseeBIRAx79")
+  app = "----",
+  consumer_key = "----",
+  consumer_secret = "----",
+  access_token = "----",
+  access_secret = "----")
 
 jsonfile <- "poli_20200310.json"
 
