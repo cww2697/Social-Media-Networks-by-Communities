@@ -5,9 +5,9 @@ from tweepy import Stream
 
 #Twitter Developer Access Tokens
 access_token = "846302774-pPB0TfVkUWOO4aEr8hKNlKupkog1g1VFPnho1Td3"
-access_token_secret = "IUafuVm1YOk3S3hIflkUPxbI3Zb6pQubm2vseeBIRAx79"
+access_token_secret = ""
 consumer_key = "uAMKZaMyqwAan03Cd5ZJpL56A"
-consumer_secret = "o9Q5OuYx6imBUcYvEIi8MVQ9WdSuCkCGIT9ieA0YNTJJZMBleL"
+consumer_secret = ""
 
 #Output Listener
 class StdOutListener(StreamListener):
